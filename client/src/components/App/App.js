@@ -97,7 +97,7 @@ const App = ({
   return (
     <Section>
       <Container>
-        <h1>Screen Sharing with Twilio</h1>
+        <h1>Twilio Video chat with screen sharing</h1>
         {errorMessage && (
           <Notification color="danger">
             Error: {errorMessage}

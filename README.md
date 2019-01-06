@@ -1,44 +1,45 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Twilio Video chat with screen sharing - React app
 
-## Available Scripts
+This is a simple React app that demonstrates how to use [Twilio Programmable Video](https://www.twilio.com/video) and implement browser extension free screen sharing feature.
 
-In the project directory, you can run:
+This project includes both backend and frontend part of the app. I've tried to simplify things as much I could.
 
-### `npm start`
+## Why
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Various browsers support screen sharing by using custom extensions. While it works, it takes relatively a lot of time to implement such extension and publish it, not to mention that this kind of solution is not very user-friendly. With WebRTC trying to standardize the API, now we can try to implement a cross-browser solution.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+**Note that not all major browsers support the standard just yet**. There are also some differences across various implementations. To handle these differences, we're going to use [WebRTC adapter](https://github.com/webrtchacks/adapter) library. That way, we'll end up with a code that (hopefully) will require very little changes to enable screen sharing on remaining browsers. At the moment, **only** FireFox supports screen-sharing.
 
-### `npm test`
+You can find more information on WebRTC standard implementation in the [article](https://blog.mozilla.org/webrtc/getdisplaymedia-now-available-in-adapter-js/).
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Prerequisites
 
-### `npm run build`
+- Active [Twilio](https://www.twilio.com/) account (can be a trial account)
+- Node.js installed
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## How to run the app
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+To run the app locally, you need to start up the Express backend server and React dev server simultaneously.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To do this, simply:
 
-### `npm run eject`
+1. Navigate to the root of the project.
+2. Install the dependencies by executing `yarn install`
+3. Create `.env` file with Twilio account details in the root directory. It should look like this (replace with your own values):
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+   ```
+   TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   TWILIO_API_KEY=SKxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   TWILIO_API_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   You can obtain the values after logging to your account. `API_KEY` and `API_SECRET` pair must be generated [here](https://www.twilio.com/console/video/runtime/api-keys).
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. Start up the Express server: `node server.js`
+5. Navigate to `client` sub-directory
+6. Install frontend dependencies by executing `yarn install`
+7. Start up the React dev server: `yarn start`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+After this you can open `http://localhost:3000/` in your browser, the app should be running.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+To join the video room, type the user name, room name and click `Join`.
