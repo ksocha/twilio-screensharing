@@ -18,8 +18,9 @@ class AppContainer extends PureComponent {
   state = {
     videoRoom: null,
     isJoining: false,
-    username: "",
-    roomname: ""
+    userName: "",
+    roomName: "",
+    errorMessage: null
   };
 
   async componentDidMount() {
@@ -29,15 +30,15 @@ class AppContainer extends PureComponent {
   }
 
   getToken = async () => {
-    const { username } = this.state;
+    const { userName } = this.state;
 
-    const response = await getToken(username);
+    const response = await getToken(userName);
 
     return response.data.token;
   };
 
   joinRoom = async () => {
-    const { roomname } = this.state;
+    const { roomName } = this.state;
 
     this.setState({ isJoining: true });
 
@@ -48,33 +49,40 @@ class AppContainer extends PureComponent {
         name: VIDEO_TRACK_NAME
       });
 
+      this.setState({ localVideoTrack });
+
       const localAudioTrack = await TwilioVideo.createLocalAudioTrack({
         name: AUDIO_TRACK_NAME
       });
 
+      this.setState({ localAudioTrack });
+
       const videoRoom = await TwilioVideo.connect(
         token,
         {
-          name: roomname,
+          name: roomName,
           tracks: [localVideoTrack, localAudioTrack]
         }
       );
 
       videoRoom.on("disconnected", () => {
-        localVideoTrack.stop();
-        localAudioTrack.stop();
+        this.stopVideoTrack();
+        this.stopAudioTrack();
         this.stopScreenTrack();
 
         this.setState({
-          videoRoom: null,
-          localVideoTrack: null,
-          localAudioTrack: null
+          videoRoom: null
         });
       });
 
-      this.setState({ videoRoom, localVideoTrack, localAudioTrack });
+      this.setState({ videoRoom });
     } catch (error) {
-      // TODO: add error indicator
+      this.stopVideoTrack();
+      this.stopAudioTrack();
+
+      this.setState({
+        errorMessage: error.message
+      });
     }
 
     this.setState({ isJoining: false });
@@ -88,14 +96,18 @@ class AppContainer extends PureComponent {
     }
   };
 
-  stopScreenTrack = () => {
-    const { screenTrack } = this.state;
+  stopTrack = trackName => {
+    const track = this.state[trackName];
 
-    if (screenTrack) {
-      screenTrack.stop();
-      this.setState({ screenTrack: null });
+    if (track) {
+      track.stop();
+      this.setState({ [trackName]: null });
     }
   };
+
+  stopScreenTrack = () => this.stopTrack("screenTrack");
+  stopVideoTrack = () => this.stopTrack("localVideoTrack");
+  stopAudioTrack = () => this.stopTrack("localAudioTrack");
 
   shareScreen = async () => {
     const { videoRoom, localVideoTrack, screenTrack } = this.state;
@@ -122,29 +134,41 @@ class AppContainer extends PureComponent {
     }
   };
 
-  changeUsername = username => this.setState({ username });
+  hideErrorMessage = () => this.setState({ errorMessage: null });
 
-  changeRoomname = roomname => this.setState({ roomname });
+  changeUserName = userName => this.setState({ userName });
+
+  changeRoomName = roomName => this.setState({ roomName });
 
   render() {
     const { render } = this.props;
-    const { videoRoom, isJoining, username, roomname } = this.state;
+    const {
+      videoRoom,
+      isJoining,
+      userName,
+      roomName,
+      errorMessage,
+      screenTrack
+    } = this.state;
 
     return render({
       videoRoom,
-      username,
-      roomname,
+      userName,
+      roomName,
       isVideoSupported: TwilioVideo.isSupported,
       isScreenSharingSupported: Boolean(
         navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia
       ),
-      canJoin: !isEmpty(username) && !isEmpty(roomname),
+      isScreenSharingEnabled: Boolean(screenTrack),
+      canJoin: !isEmpty(userName) && !isEmpty(roomName),
       isJoining,
       onJoin: this.joinRoom,
       onLeave: this.leaveRoom,
       onShare: this.shareScreen,
-      onRoomnameChange: this.changeRoomname,
-      onUsernameChange: this.changeUsername
+      onRoomNameChange: this.changeRoomName,
+      onUserNameChange: this.changeUserName,
+      errorMessage,
+      onErrorMessageHide: this.hideErrorMessage
     });
   }
 }

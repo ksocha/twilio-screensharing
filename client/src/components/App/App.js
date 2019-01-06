@@ -2,26 +2,37 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import "react-bulma-components/dist/react-bulma-components.min.css";
-import { Section, Container, Button, Form } from "react-bulma-components";
+import {
+  Section,
+  Container,
+  Columns,
+  Button,
+  Form,
+  Notification
+} from "react-bulma-components";
 
 import videoRoomPropType from "../../propTypes/videoRoom";
 import VideoRoom from "../VideoRoom/VideoRoom";
+import FieldInput from "../Fields/FieldInput";
 
 import AppContainer from "./AppContainer";
 
 const App = ({
   videoRoom,
-  username,
-  roomname,
+  userName,
+  roomName,
   isJoining,
   isVideoSupported,
   isScreenSharingSupported,
+  isScreenSharingEnabled,
   canJoin,
   onJoin,
   onLeave,
   onShare,
-  onUsernameChange,
-  onRoomnameChange
+  onUserNameChange,
+  onRoomNameChange,
+  errorMessage,
+  onErrorMessageHide
 }) => {
   let content = null;
 
@@ -34,69 +45,65 @@ const App = ({
 
         <Form.Field kind="group" align="centered">
           <Form.Control>
-            <Button
-              onClick={() => onLeave()}
-              // loading={isConnecting}
-            >
-              Disconnect
-            </Button>
+            <Button onClick={() => onLeave()}>Leave</Button>
           </Form.Control>
 
           <Form.Control>
             <Button
               onClick={() => onShare()}
-              // loading={isConnecting}
               disabled={!isScreenSharingSupported}
             >
-              Share screen
+              {isScreenSharingEnabled ? "Stop sharing" : "Start sharing"}
             </Button>
           </Form.Control>
         </Form.Field>
       </>
     ) : (
-      <>
-        <Form.Field>
-          <Form.Control>
-            <Form.Input
-              onChange={e => onUsernameChange(e.target.value)}
-              name="username"
-              placeholder="User name"
-              value={username}
-            />
-          </Form.Control>
-        </Form.Field>
+      <Columns>
+        <Columns.Column size="half" offset="one-quarter">
+          <FieldInput
+            value={userName}
+            name="userName"
+            label="User"
+            placeholder="The identifier of the user"
+            onChange={onUserNameChange}
+          />
 
-        <Form.Field>
-          <Form.Control>
-            <Form.Input
-              onChange={e => onRoomnameChange(e.target.value)}
-              name="roomname"
-              placeholder="Room name"
-              value={roomname}
-            />
-          </Form.Control>
-        </Form.Field>
+          <FieldInput
+            value={roomName}
+            name="roomName"
+            label="Room"
+            placeholder="The name of the room that you want to join"
+            onChange={onRoomNameChange}
+          />
 
-        <Form.Field kind="group" align="centered">
-          <Form.Control>
-            <Button
-              onClick={() => onJoin()}
-              loading={isJoining}
-              disabled={!canJoin}
-            >
-              Join
-            </Button>
-          </Form.Control>
-        </Form.Field>
-      </>
+          <Form.Field kind="group" align="centered">
+            <Form.Control>
+              <Button
+                onClick={() => onJoin()}
+                loading={isJoining}
+                disabled={!canJoin}
+                color="primary"
+              >
+                Join
+              </Button>
+            </Form.Control>
+          </Form.Field>
+        </Columns.Column>
+      </Columns>
     );
   }
 
   return (
     <Section>
       <Container>
-        {/* TODO: add proper text */}
-        <h1>WebRTC app</h1>
+        <h1>Screen Sharing with Twilio</h1>
+        {errorMessage && (
+          <Notification color="danger">
+            Error: {errorMessage}
+            <Button onClick={onErrorMessageHide} remove />
+          </Notification>
+        )}
         {content}
       </Container>
     </Section>
@@ -105,20 +112,21 @@ const App = ({
 
 App.propTypes = {
   videoRoom: videoRoomPropType,
-  username: PropTypes.string.isRequired,
-  roomname: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
+  roomName: PropTypes.string.isRequired,
   isJoining: PropTypes.bool.isRequired,
   isVideoSupported: PropTypes.bool.isRequired,
   isScreenSharingSupported: PropTypes.bool.isRequired,
+  isScreenSharingEnabled: PropTypes.bool.isRequired,
   canJoin: PropTypes.bool.isRequired,
   onJoin: PropTypes.func.isRequired,
   onLeave: PropTypes.func.isRequired,
   onShare: PropTypes.func.isRequired,
-  onUsernameChange: PropTypes.func.isRequired,
-  onRoomnameChange: PropTypes.func.isRequired
+  onUserNameChange: PropTypes.func.isRequired,
+  onRoomNameChange: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  onErrorMessageHide: PropTypes.func.isRequired
 };
-
-export { App as AppUnwrapped };
 
 const render = containerProps => <App {...containerProps} />;
 export default props => <AppContainer render={render} {...props} />;

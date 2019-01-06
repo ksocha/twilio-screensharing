@@ -450,10 +450,10 @@ eslint-plugin-prettier@^3.0.1:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-plugin-react@^7.12.0:
-  version "7.12.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.12.0.tgz#fa6701063f2172c3e1db3a22d3db6d8bdc0179af"
-  integrity sha512-OrmXBWGrZ8gvYWO0W4oiLtASxFWVfe2blgy5pvB57YRwylhghUQL5y5w70fysP/CRTt/XJ+FLv/KXhZxbsQwiw==
+eslint-plugin-react@^7.12.3:
+  version "7.12.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.12.3.tgz#b9ca4cd7cd3f5d927db418a1950366a12d4568fd"
+  integrity sha512-WTIA3cS8OzkPeCi4KWuPmjR33lgG9r9Y/7RmnLTRw08MZKgAfnK/n3BO4X0S67MPkVLazdfCNT/XWqcDu4BLTA==
   dependencies:
     array-includes "^3.0.3"
     doctrine "^2.1.0"
@@ -1346,10 +1346,10 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
-twilio@^3.26.0:
-  version "3.26.0"
-  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.26.0.tgz#dcdbcdef0d32c862dc9162ab3e9fe6dda61d3e46"
-  integrity sha512-ovXotcYLY49fcjXHuou5nGVU664ucfIy7yXVAswtdBQwdENPT+ZtFg4F294ihuJWxfIFAjwyPfcrQGDKD3IfKQ==
+twilio@^3.26.1:
+  version "3.26.1"
+  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.26.1.tgz#e5bab3b4802f9605299f1ae1e5117fa76b2ae663"
+  integrity sha512-e8wVJR2FxYUfbVhXrRKUdBMljlwZSU/5WYEqggUyQoD8waD3SRjNkCShDGXHDIVNutYGG0sSD/fGMD/f5C98Qw==
   dependencies:
     "@types/express" "^4.11.1"
     deprecate "1.0.0"
