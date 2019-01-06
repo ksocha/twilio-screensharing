@@ -1,7 +1,7 @@
 const express = require("express");
 const twilio = require("twilio");
 
-const credentials = require("./twilioCredentials");
+require("dotenv").config();
 
 const AccessToken = twilio.jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
@@ -14,9 +14,9 @@ app.listen(port);
 
 app.get("/token", (req, res) => {
   const token = new AccessToken(
-    credentials.accountSid,
-    credentials.apiKey,
-    credentials.apiSecret
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_API_KEY,
+    process.env.TWILIO_API_SECRET
   );
 
   token.addGrant(new VideoGrant());

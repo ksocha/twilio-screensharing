@@ -24,14 +24,14 @@ export default class EventSubscriber extends PureComponent {
   componentDidUpdate(prevProps) {
     const { eventEmitterObject } = this.props;
 
-    if (eventEmitterObject !== prevProps.eventEmitterObject) {
-      if (eventEmitterObject) {
-        this.subscribeEvents(eventEmitterObject);
-      }
+    if (prevProps.eventEmitterObject === eventEmitterObject) {
+      return;
+    }
 
-      if (prevProps.eventEmitterObject) {
-        this.unsubscribeEvents(prevProps.eventEmitterObject);
-      }
+    if (eventEmitterObject) {
+      this.subscribeEvents(eventEmitterObject);
+    } else {
+      this.unsubscribeEvents(prevProps.eventEmitterObject);
     }
   }
 
@@ -44,21 +44,15 @@ export default class EventSubscriber extends PureComponent {
   }
 
   subscribeEvents = room => {
-    const { events } = this.props;
+    const { events, onUpdate } = this.props;
 
-    events.forEach(event => room.addListener(event, this.update));
+    events.forEach(event => room.addListener(event, onUpdate));
   };
 
   unsubscribeEvents = room => {
-    const { events } = this.props;
+    const { events, onUpdate } = this.props;
 
-    events.forEach(event => room.removeListener(event, this.update));
-  };
-
-  update = () => {
-    const { onUpdate } = this.props;
-
-    onUpdate();
+    events.forEach(event => room.removeListener(event, onUpdate));
   };
 
   render() {
