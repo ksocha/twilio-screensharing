@@ -2,13 +2,9 @@ import { PureComponent } from "react";
 import PropTypes from "prop-types";
 import adapter from "webrtc-adapter";
 import TwilioVideo from "twilio-video";
-import { isEmpty } from "lodash";
+import { isEmpty, first } from "lodash";
 
 import { getToken } from "../../api";
-
-const SCREEN_TRACK_NAME = "screen";
-const VIDEO_TRACK_NAME = "camera";
-const AUDIO_TRACK_NAME = "microphone";
 
 class AppContainer extends PureComponent {
   static propTypes = {
@@ -45,23 +41,18 @@ class AppContainer extends PureComponent {
     try {
       const token = await this.getToken();
 
-      const localVideoTrack = await TwilioVideo.createLocalVideoTrack({
-        name: VIDEO_TRACK_NAME
-      });
-
+      const localVideoTrack = await TwilioVideo.createLocalVideoTrack();
       this.setState({ localVideoTrack });
 
-      const localAudioTrack = await TwilioVideo.createLocalAudioTrack({
-        name: AUDIO_TRACK_NAME
-      });
-
+      const localAudioTrack = await TwilioVideo.createLocalAudioTrack();
       this.setState({ localAudioTrack });
 
       const videoRoom = await TwilioVideo.connect(
         token,
         {
           name: roomName,
-          tracks: [localVideoTrack, localAudioTrack]
+          tracks: [localVideoTrack, localAudioTrack],
+          insights: false
         }
       );
 
@@ -106,31 +97,38 @@ class AppContainer extends PureComponent {
   };
 
   stopScreenTrack = () => this.stopTrack("screenTrack");
+
   stopVideoTrack = () => this.stopTrack("localVideoTrack");
+
   stopAudioTrack = () => this.stopTrack("localAudioTrack");
 
   shareScreen = async () => {
-    const { videoRoom, localVideoTrack, screenTrack } = this.state;
+    try {
+      const { videoRoom, localVideoTrack, screenTrack } = this.state;
 
-    if (!screenTrack) {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true
-      });
-      const [screenTrack] = stream.getVideoTracks();
-      this.setState({
-        screenTrack: new TwilioVideo.LocalVideoTrack(screenTrack, {
-          name: SCREEN_TRACK_NAME
-        })
-      });
+      if (!screenTrack) {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true
+        });
+        const newScreenTrack = first(stream.getVideoTracks());
 
-      videoRoom.localParticipant.publishTrack(screenTrack);
-      videoRoom.localParticipant.unpublishTrack(localVideoTrack);
-    } else {
-      const { screenTrack } = this.state;
+        this.setState({
+          screenTrack: new TwilioVideo.LocalVideoTrack(newScreenTrack)
+        });
 
-      videoRoom.localParticipant.unpublishTrack(screenTrack);
-      videoRoom.localParticipant.publishTrack(localVideoTrack);
+        videoRoom.localParticipant.publishTrack(newScreenTrack);
+        videoRoom.localParticipant.unpublishTrack(localVideoTrack);
+      } else {
+        videoRoom.localParticipant.unpublishTrack(screenTrack);
+        videoRoom.localParticipant.publishTrack(localVideoTrack);
+        this.stopScreenTrack();
+      }
+    } catch (error) {
       this.stopScreenTrack();
+
+      this.setState({
+        errorMessage: error.message
+      });
     }
   };
 

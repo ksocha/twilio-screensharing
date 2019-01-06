@@ -128,5 +128,10 @@ App.propTypes = {
   onErrorMessageHide: PropTypes.func.isRequired
 };
 
+App.defaultProps = {
+  videoRoom: null,
+  errorMessage: null
+};
+
 const render = containerProps => <App {...containerProps} />;
 export default props => <AppContainer render={render} {...props} />;
