@@ -19,7 +19,7 @@ class AppContainer extends PureComponent {
     errorMessage: null
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     if (adapter.browserDetails.browser === "firefox") {
       adapter.browserShim.shimGetDisplayMedia(window, "screen");
     }
