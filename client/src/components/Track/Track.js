@@ -1,25 +1,22 @@
-import React, { PureComponent } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 
 import trackPropType from "../../propTypes/track";
 
-class Track extends PureComponent {
-  media = React.createRef();
+const Track = ({ track }) => {
+  const mediaElement = useRef(null);
+  useLayoutEffect(() => {
+    track.attach(mediaElement.current);
 
-  static propTypes = {
-    track: trackPropType.isRequired
-  };
+    return () => {
+      track.detach(mediaElement.current);
+    };
+  }, [track]);
 
-  componentDidMount() {
-    const { track } = this.props;
+  return <track.kind autoPlay ref={mediaElement} />;
+};
 
-    track.attach(this.media.current);
-  }
-
-  render() {
-    const { track } = this.props;
-
-    return <track.kind autoPlay ref={this.media} />;
-  }
-}
+Track.propTypes = {
+  track: trackPropType.isRequired
+};
 
 export default Track;

@@ -19,13 +19,14 @@
   "dependencies": {
     "dotenv": "^6.2.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^3.3.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.12.3",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^0.0.0",
     "express": "^4.16.4",
-    "prettier": "^1.15.3",
-    "twilio": "^3.26.1"
+    "prettier": "^1.16.4",
+    "twilio": "^3.27.1"
   }
 }

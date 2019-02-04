@@ -1,31 +1,19 @@
-import React, { PureComponent } from "react";
+import React from "react";
 
 import participantPropType from "../../propTypes/participant";
-import EventSubscriber from "../EventSubscriber/EventSubscriber";
+import useEventSubscriber from "../../hooks/useEventSubscriber";
 import Participant from "./Participant";
 
 const EVENTS = ["trackPublished", "trackPublicationFailed"];
 
-class LocalParticipant extends PureComponent {
-  static propTypes = {
-    participant: participantPropType.isRequired
-  };
+const LocalParticipant = ({ participant }) => {
+  useEventSubscriber(participant, EVENTS);
 
-  update = () => this.forceUpdate();
+  return <Participant participant={participant} />;
+};
 
-  render() {
-    const { participant } = this.props;
-
-    return (
-      <EventSubscriber
-        events={EVENTS}
-        eventEmitterObject={participant}
-        onUpdate={this.update}
-      >
-        <Participant participant={participant} />
-      </EventSubscriber>
-    );
-  }
-}
+LocalParticipant.propTypes = {
+  participant: participantPropType.isRequired
+};
 
 export default LocalParticipant;

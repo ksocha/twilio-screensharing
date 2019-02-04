@@ -6,6 +6,10 @@ import { isEmpty, first } from "lodash";
 
 import { getToken } from "../../api";
 
+if (adapter.browserDetails.browser === "firefox") {
+  adapter.browserShim.shimGetDisplayMedia(window, "screen");
+}
+
 class AppContainer extends PureComponent {
   static propTypes = {
     render: PropTypes.func.isRequired
@@ -18,12 +22,6 @@ class AppContainer extends PureComponent {
     roomName: "",
     errorMessage: null
   };
-
-  componentDidMount() {
-    if (adapter.browserDetails.browser === "firefox") {
-      adapter.browserShim.shimGetDisplayMedia(window, "screen");
-    }
-  }
 
   getToken = async () => {
     const { userName } = this.state;
@@ -47,14 +45,11 @@ class AppContainer extends PureComponent {
       const localAudioTrack = await TwilioVideo.createLocalAudioTrack();
       this.setState({ localAudioTrack });
 
-      const videoRoom = await TwilioVideo.connect(
-        token,
-        {
-          name: roomName,
-          tracks: [localVideoTrack, localAudioTrack],
-          insights: false
-        }
-      );
+      const videoRoom = await TwilioVideo.connect(token, {
+        name: roomName,
+        tracks: [localVideoTrack, localAudioTrack],
+        insights: false
+      });
 
       videoRoom.on("disconnected", () => {
         this.stopVideoTrack();
